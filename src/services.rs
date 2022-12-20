@@ -1,6 +1,9 @@
-use crate::{data::{DataKey, Match, Bet}, errors::Error};
-use soroban_sdk::{Env, map, panic_with_error};
+use crate::{
+    data::{Bet, DataKey, Match},
+    errors::Error,
+};
 use soroban_auth::{Identifier, Signature};
+use soroban_sdk::{map, panic_with_error, Env};
 
 pub fn has_admin(env: &Env) -> bool {
     env.storage().has(DataKey::Admin)
@@ -16,11 +19,12 @@ pub fn write_admin(env: &Env, admin: Identifier) {
 }
 
 pub fn write_bet(env: &Env, match_object: Match, user: Identifier, bet: Bet) {
-    let mut bets = env.storage()
+    let mut bets = env
+        .storage()
         .get(DataKey::Match(match_object))
         .unwrap_or(Ok(map![env, (user.clone(), bet)]))
         .unwrap();
-    
+
     bets.set(user, bet);
 
     env.storage().set(DataKey::Match(match_object), bets)

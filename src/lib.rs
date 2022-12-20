@@ -3,5 +3,5 @@
 pub mod contract;
 mod data;
 mod errors;
-mod test;
 pub mod services;
+mod test;

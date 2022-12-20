@@ -1,7 +1,10 @@
 #![cfg(test)]
-use crate::{data::{DataKey, Match, Bet}, contract::{BetContract, BetContractClient}};
+use crate::{
+    contract::{BetContract, BetContractClient},
+    data::{Bet, DataKey, Match},
+};
 use soroban_auth::{testutils, Identifier};
-use soroban_sdk::{Env, symbol, Map};
+use soroban_sdk::{symbol, Env, Map};
 
 #[test]
 #[should_panic(expected = "Status(ContractError(1)")]
@@ -28,9 +31,7 @@ fn init_contract_successfully() {
 
     client.init(&admin);
 
-    env.as_contract(&contract_id, || {
-        assert!(env.storage().has(DataKey::Admin))
-    });
+    env.as_contract(&contract_id, || assert!(env.storage().has(DataKey::Admin)));
 }
 
 #[test]
@@ -43,8 +44,8 @@ fn add_bet_not_authorized() {
     let (admin, _) = testutils::ed25519::generate(&env);
 
     let nonce: i128 = 1;
-    let match_object = Match{id: 1};
-    let bet = Bet{amount: 10};
+    let match_object = Match { id: 1 };
+    let bet = Bet { amount: 10 };
 
     let signature = testutils::ed25519::sign(
         &env,
@@ -74,8 +75,8 @@ fn add_bet_invalid_nonce() {
     let (admin, admin_signature) = testutils::ed25519::generate(&env);
 
     let nonce: i128 = 2;
-    let match_object = Match{id: 1};
-    let bet = Bet{amount: 10};
+    let match_object = Match { id: 1 };
+    let bet = Bet { amount: 10 };
 
     let signature = testutils::ed25519::sign(
         &env,
@@ -105,8 +106,8 @@ fn add_bet_successfully() {
 
     let (admin, admin_signature) = testutils::ed25519::generate(&env);
     let nonce: i128 = 1;
-    let match_object = Match{id: 1};
-    let bet = Bet{amount: 10};
+    let match_object = Match { id: 1 };
+    let bet = Bet { amount: 10 };
 
     let signature = testutils::ed25519::sign(
         &env,
@@ -128,7 +129,10 @@ fn add_bet_successfully() {
     env.as_contract(&contract_id, || {
         assert!(env.storage().has(DataKey::Match(match_object)));
 
-        let bets: Map<Identifier, Bet> = env.storage().get_unchecked(DataKey::Match(match_object)).unwrap();
+        let bets: Map<Identifier, Bet> = env
+            .storage()
+            .get_unchecked(DataKey::Match(match_object))
+            .unwrap();
 
         assert!(bets.contains_key(user.clone()));
         assert_eq!(bets.contains_key(user2.clone()), false)
@@ -148,7 +152,10 @@ fn add_bet_successfully() {
     env.as_contract(&contract_id, || {
         assert!(env.storage().has(DataKey::Match(match_object)));
 
-        let bets: Map<Identifier, Bet> = env.storage().get_unchecked(DataKey::Match(match_object)).unwrap();
+        let bets: Map<Identifier, Bet> = env
+            .storage()
+            .get_unchecked(DataKey::Match(match_object))
+            .unwrap();
 
         assert!(bets.contains_key(user));
         assert!(bets.contains_key(user2))

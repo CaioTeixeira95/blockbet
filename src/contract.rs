@@ -1,6 +1,10 @@
-use crate::{errors::Error, services::{has_admin, is_admin, write_admin, write_bet, verify_and_consume_nonce}, data::{Match, Bet}};
+use crate::{
+    data::{Bet, Match},
+    errors::Error,
+    services::{has_admin, is_admin, verify_and_consume_nonce, write_admin, write_bet},
+};
 use soroban_auth::{Identifier, Signature};
-use soroban_sdk::{contractimpl, Env, panic_with_error};
+use soroban_sdk::{contractimpl, panic_with_error, Env};
 
 pub struct BetContract;
 
@@ -14,7 +18,14 @@ impl BetContract {
         write_admin(&env, admin);
     }
 
-    pub fn add_bet(env: Env, admin: Signature, nonce: i128, match_object: Match, user: Identifier, bet: Bet) {
+    pub fn add_bet(
+        env: Env,
+        admin: Signature,
+        nonce: i128,
+        match_object: Match,
+        user: Identifier,
+        bet: Bet,
+    ) {
         let admin_identifier = admin.identifier(&env);
 
         if !is_admin(&env, admin_identifier) {

@@ -1,8 +1,8 @@
-use soroban_sdk::{contracttype};
+use soroban_sdk::contracttype;
 
 #[contracttype]
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Match{
+pub struct Match {
     pub id: i128,
 }
 
