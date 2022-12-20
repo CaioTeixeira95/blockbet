@@ -17,8 +17,8 @@ pub fn write_admin(env: &Env, admin: Identifier) {
 
 pub fn write_bet(env: &Env, match_object: Match, user: Identifier, bet: Bet) {
     let mut bets = env.storage()
-        .get(DataKey::Match(match_object.clone()))
-        .unwrap_or(Ok(map![env, (user.clone(), bet.clone())]))
+        .get(DataKey::Match(match_object))
+        .unwrap_or(Ok(map![env, (user.clone(), bet)]))
         .unwrap();
     
     bets.set(user, bet);
@@ -27,17 +27,11 @@ pub fn write_bet(env: &Env, match_object: Match, user: Identifier, bet: Bet) {
 }
 
 pub fn verify_and_consume_nonce(env: &Env, auth: &Signature, expected_nonce: i128) {
-    match auth {
-        Signature::Invoker => {
-            if expected_nonce != 0 {
-                panic_with_error!(env, Error::NonZeroNonce)
-            }
-            return;
-        }
-        _ => {}
+    if auth == &Signature::Invoker && expected_nonce != 0 {
+        panic_with_error!(env, Error::NonZeroNonce)
     }
 
-    let nonce = read_admin_nonce(&env);
+    let nonce = read_admin_nonce(env);
 
     if nonce != expected_nonce {
         panic_with_error!(env, Error::InvalidNonce)
